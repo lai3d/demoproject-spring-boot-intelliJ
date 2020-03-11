@@ -11,7 +11,7 @@ import java.util.Optional;
 public class BlogController {
 
     @Autowired
-    BlogRespository blogRespository;
+    BlogRepository blogRespository;
 
     @GetMapping("/blog")
     public List<Blog> index(){
