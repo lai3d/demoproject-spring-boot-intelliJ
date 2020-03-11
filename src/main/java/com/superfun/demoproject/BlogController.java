@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class BlogController {
@@ -14,14 +15,18 @@ public class BlogController {
 
     @GetMapping("/blog")
     public List<Blog> index(){
-        return blogRespository.findAll();
+        return (List<Blog>) blogRespository.findAll();
     }
 
-//    @GetMapping("/blog/{id}")
-//    public Blog show(@PathVariable String id){
-//        int blogId = Integer.parseInt(id);
-//        return blogRespository.findOne(blogId);
-//    }
+    @GetMapping("/blog/{id}")
+    public Blog show(@PathVariable String id){
+        int blogId = Integer.parseInt(id);
+        Optional<Blog> blog = blogRespository.findById(blogId);
+        if(blog.isPresent())
+            return blog.get();
+        else
+            return null;
+    }
 
     @PostMapping("/blog/search")
     public List<Blog> search(@RequestBody Map<String, String> body){
@@ -36,22 +41,22 @@ public class BlogController {
         return blogRespository.save(new Blog(title, content));
     }
 
-//    @PutMapping("/blog/{id}")
-//    public Blog update(@PathVariable String id, @RequestBody Map<String, String> body){
-//        int blogId = Integer.parseInt(id);
-//        // getting blog
-//        Blog blog = blogRespository.findOne(blogId);
-//        blog.setTitle(body.get("title"));
-//        blog.setContent(body.get("content"));
-//        return blogRespository.save(blog);
-//    }
-//
-//    @DeleteMapping("blog/{id}")
-//    public boolean delete(@PathVariable String id){
-//        int blogId = Integer.parseInt(id);
-//        blogRespository.delete(blogId);
-//        return true;
-//    }
+    @PutMapping("/blog/{id}")
+    public Blog update(@PathVariable String id, @RequestBody Map<String, String> body){
+        int blogId = Integer.parseInt(id);
+        // getting blog
+        Blog blog = blogRespository.findById(blogId).get();
+        blog.setTitle(body.get("title"));
+        blog.setContent(body.get("content"));
+        return blogRespository.save(blog);
+    }
+
+    @DeleteMapping("blog/{id}")
+    public boolean delete(@PathVariable String id){
+        int blogId = Integer.parseInt(id);
+        blogRespository.deleteById(blogId);
+        return true;
+    }
 
 
 }
